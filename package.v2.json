@@ -3,10 +3,11 @@
         "name": "邮件消息通知",
         "description": "邮件消息通知",
         "labels": "消息通知",
-        "version": "1",
+        "version": "1.1",
         "author": "zhangxuri198",
         "level": 1,
         "history": {
+            "v1.1": "优化插件格式",
             "v1.0": "新建插件"
         }
     }
