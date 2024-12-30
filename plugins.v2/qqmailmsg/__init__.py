@@ -17,11 +17,19 @@ def send_email(smtp_server, smtp_port, sender_email, sender_password, recipient_
     msg['From'] = sender_email
     msg['To'] = recipient_email
     msg['Subject'] = subject  # 设置邮件标题
+    
+    # 创建邮件正文（HTML 格式）
+    html_body = f"""
+        <html>
+            <body>
+                <p>{body}</p>
+                {f'<img src="cid:image1">' if image_url else ''}
+            </body>
+        </html>
+        """
+    msg.attach(MIMEText(html_body, 'html'))
 
-    # 邮件正文部分（文本内容）
-    msg.attach(MIMEText(body, 'plain'))
-
-    # 如果提供了图片 URL，则下载并添加图片附件
+    # 如果提供了图片 URL，则下载并嵌入图片
     if image_url:
         try:
             # 通过 URL 获取图片内容
@@ -29,12 +37,12 @@ def send_email(smtp_server, smtp_port, sender_email, sender_password, recipient_
             response.raise_for_status()  # 如果请求失败会抛出异常
             img_data = response.content
 
-            # 创建图片附件
+            # 创建图片附件并嵌入到邮件正文中
             img = MIMEImage(img_data)
-            img.add_header('Content-ID', '<image1>')  # 可以在邮件正文中引用图片
+            img.add_header('Content-ID', '<image1>')  # 设置 Content-ID，用于在 HTML 中引用
             msg.attach(img)
         except requests.exceptions.RequestException as e:
-            logger.warn(f"下载图片时发生错误: {e}")
+            print(f"下载图片时发生错误: {e}")
 
     # 连接到SMTP服务器并发送邮件
     server = None
